@@ -86,7 +86,6 @@ public:
         else
             return false;
     }
-
     void insert(int item)
     {
         treeNode *p = new treeNode;
@@ -121,39 +120,6 @@ public:
             }
         }
     }
-
-    void fun(treeNode *itr, int tar, vector<vector<int>> &ans, vector<int> path)
-    {
-        if (itr == NULL)
-        {
-            return;
-        }
-        path.push_back(itr->val);
-        if (itr->val == tar and itr->left == NULL and itr->right == NULL)
-        {
-            ans.push_back(path);
-        }
-        if (itr->left)
-        {
-            fun(itr->left, tar - (itr->val), ans, path);
-        }
-        if (itr->right)
-        {
-            fun(itr->right, tar - (itr->val), ans, path);
-        }
-    }
-    vector<vector<int>> hasPathSum(int tar)
-    {
-        vector<vector<int>> ans;
-        if (!root)
-        {
-            return ans;
-        }
-        vector<int> path;
-        treeNode *itr = root;
-        fun(itr, tar, ans, path);
-        return ans;
-    }
     void levelwiseprint()
     {
         queue<treeNode *> q;
@@ -174,6 +140,42 @@ public:
             }
         }
     }
+
+    bool helper(treeNode *itr, int tar, vector<int> &ans)
+    {
+        if (itr == NULL)
+        {
+            return 0;
+        }
+        ans.push_back(itr->val);
+        if (itr->val == tar)
+        {
+            return 1;
+        }
+        if (itr->left)
+        {
+            if (helper(itr->left, tar, ans))
+            {
+                return 1;
+            }
+        }
+        if (itr->right)
+        {
+            if (helper(itr->right, tar, ans))
+            {
+                return 1;
+            }
+        }
+        ans.pop_back();
+        return 0;
+    }
+    vector<int> path(int tar)
+    {
+        vector<int> ans;
+        treeNode *itr = root;
+        helper(itr, tar, ans);
+        return ans;
+    }
 };
 
 void solve()
@@ -188,8 +190,11 @@ void solve()
     a1.insert(24);
     a1.insert(12);
     a1.insert(6);
-    debug(a1.hasPathSum(9));
     a1.levelwiseprint();
+    cout << endl;
+
+    vector<int> ans = a1.path(3);
+    debug(ans);
 }
 
 int32_t main()
