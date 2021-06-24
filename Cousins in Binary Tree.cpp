@@ -1,115 +1,176 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 #define int long long
 
-void __print(int x) {cerr << x;}
-void __print(long x) {cerr << x;}
+void __print(int x)
+{
+    cerr << x;
+}
+void __print(long x) { cerr << x; }
 // void __print(long long x) {cerr << x;}
-void __print(unsigned x) {cerr << x;}
-void __print(unsigned long x) {cerr << x;}
-void __print(unsigned long long x) {cerr << x;}
-void __print(float x) {cerr << x;}
-void __print(double x) {cerr << x;}
-void __print(long double x) {cerr << x;}
-void __print(char x) {cerr << '\'' << x << '\'';}
-void __print(const char *x) {cerr << '\"' << x << '\"';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}
-void __print(bool x) {cerr << (x ? "true" : "false");}
+void __print(unsigned x) { cerr << x; }
+void __print(unsigned long x) { cerr << x; }
+void __print(unsigned long long x) { cerr << x; }
+void __print(float x) { cerr << x; }
+void __print(double x) { cerr << x; }
+void __print(long double x) { cerr << x; }
+void __print(char x) { cerr << '\'' << x << '\''; }
+void __print(const char *x) { cerr << '\"' << x << '\"'; }
+void __print(const string &x) { cerr << '\"' << x << '\"'; }
+void __print(bool x) { cerr << (x ? "true" : "false"); }
 
-template<typename T, typename V>
-void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
-template<typename T>
-void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
-void _print() {cerr << "]\n";}
+template <typename T, typename V>
+void __print(const pair<T, V> &x)
+{
+    cerr << '{';
+    __print(x.first);
+    cerr << ',';
+    __print(x.second);
+    cerr << '}';
+}
+template <typename T>
+void __print(const T &x)
+{
+    int f = 0;
+    cerr << '{';
+    for (auto &i : x)
+        cerr << (f++ ? "," : ""), __print(i);
+    cerr << "}";
+}
+void _print() { cerr << "]\n"; }
 template <typename T, typename... V>
-void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+void _print(T t, V... v)
+{
+    __print(t);
+    if (sizeof...(v))
+        cerr << ", ";
+    _print(v...);
+}
 #ifndef ONLINE_JUDGE
-#define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
+#define debug(x...)               \
+    cerr << "[" << #x << "] = ["; \
+    _print(x)
 #else
 #define debug(x...)
-#endif 
+#endif
 
-const int N=2e5+4;
-const int mod=1e9+7;
+const int N = 2e5 + 4;
+const int mod = 1e9 + 7;
 
 /*
 
-
+https://www.interviewbit.com/problems/cousins-in-binary-tree/
 
 */
 
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
- 
- int getlevel(TreeNode* A, int B, int level)
- {
-     if(A==NULL) return 0;
-     if(A->val==B) return level;
-     int val=getlevel(A->left,B,level+1);
-     if(val>0) return val;
-     
-     return getlevel(A->right,B,level+1);
-     //if(val>0) return val;
- }
- 
-void getcousin(TreeNode* A, vector<int> &v, int level,int B)
+struct tree
 {
-    if(A==NULL || level<2) return;
-    if(level==2)
+    int val;
+    tree *left;
+    tree *right;
+    tree(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+int getLevel(tree *node, int val, int level)
+{
+    if (node == NULL)
     {
-        if(A->left && A->right)
+        return 0;
+    }
+    if (node->val == val)
+    {
+        return level;
+    }
+    int result = getLevel(node->left, val, level + 1);
+    if (result)
+    {
+        return result;
+    }
+    return getLevel(node->right, val, level + 1);
+}
+
+void getcousins(tree *node, vector<int> &v, int val, int level)
+{
+    if (level <= 1)
+    {
+        return;
+    }
+    if (node == NULL)
+    {
+        return;
+    }
+    if (level == 2)
+    {
+        if (node->left and node->right)
         {
-         if(A->left->val==B || A->right->val==B) return;
+            if (node->left->val != val and node->right->val != val)
+            {
+                v.push_back(node->left->val);
+                v.push_back(node->right->val);
+            }
         }
-        if(A->left )
+        else
         {
-            if(A->left->val!=B) v.push_back(A->left->val);
-        }    
-        if(A->right) 
-        {
-            if(A->right->val!=B) v.push_back(A->right->val);
-        }    
+            if (node->left)
+            {
+                if (node->left->val != val)
+                {
+                    v.push_back(node->left->val);
+                }
+            }
+            if (node->right)
+            {
+                if (node->right->val != val)
+                {
+                    v.push_back(node->right->val);
+                }
+            }
+        }
     }
-    else if(level>2)
+    else
     {
-        getcousin(A->left,v,level-1,B);
-        getcousin(A->right,v,level-1,B);
+        getcousins(node->left, v, val, level - 1);
+        getcousins(node->right, v, val, level - 1);
     }
 }
 
-vector<int> Solution::solve(TreeNode* A, int B) {
-    vector<int> ans;
-    int level=getlevel(A,B, 1);
-    
-    getcousin(A,ans,level,B);
-    //cout<<level;
-    
-    return ans;
+void solve()
+{
+    tree root(10);
+    tree a(11);
+    tree b(12);
+    tree c(13);
+    tree d(14);
+    tree e(15);
+
+    root.left = &a;
+    a.left = &b;
+    a.right = &c;
+    root.right = &d;
+    d.right = &e;
+
+    // cout<< root.val << " " << root.left->val << " " << root.left->left->val << " " << root.left->left->left->val << endl;
+
+    cout << "Level test #1: " << getLevel(&root, 15, 1) << endl;
+    // cout<<"Level test #2: "<< getLevel(&root, 13, 1)<<endl;
+
+    int level = getLevel(&root, 15, 1);
+
+    vector<int> cousins;
+    getcousins(&root, cousins, 15, level);
+
+    cout << "Cousin folks: ";
+    debug(cousins);
 }
 
-void solve(){
-    
-}
-
-int32_t main(){
+int32_t main()
+{
     // ios_base::sync_with_stdio(false);cin.tie(NULL);
-    int tt; 
-    tt=1;
-    cin>>tt;
-    for(int t=1;t<=tt;t++){
+    int tt;
+    tt = 1;
+    // cin>>tt;
+    for (int t = 1; t <= tt; t++)
+    {
         solve();
     }
-} 
+}
